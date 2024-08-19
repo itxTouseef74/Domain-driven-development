@@ -1,0 +1,37 @@
+# E-commerce App
+
+This is a simple e-commerce application built using Node.js and Express, following Domain-Driven Design (DDD) principles. The application is divided into three main bounded contexts: Products, Shopping (Cart), and Customer.
+
+## Project Structure
+
+```plaintext
+ecommerce-app/
+├── shopping/
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   ├── api/
+│       └── ShoppingController.js
+├── products/
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   ├── api/
+│       └── ProductController.js
+├── customer/
+│   ├── domain/
+│   ├── application/
+│   ├── infrastructure/
+│   ├── api/
+│       └── CustomerController.js
+├── shared/
+│   ├── domain/
+│   │   ├── ValueObject.js
+│   │   ├── Money.js
+│   │   ├── DomainEvent.js
+│   │   └── ProductCreatedEvent.js
+│   ├── infrastructure/
+│       ├── Logger.js
+│       └── Database.js
+├── app.js
+└── package.json
