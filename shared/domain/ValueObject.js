@@ -1,6 +1,6 @@
 class ValueObject {
     constructor(props) {
-        this.props = Object.freeze(props); // Immutable properties
+        this.props = Object.freeze(props); 
     }
 
     equals(vo) {
