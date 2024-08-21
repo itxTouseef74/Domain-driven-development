@@ -1,76 +1,50 @@
-const ProductModel = require("../infrastructure/ProductModel");
-const Product = require("../domain/product");
+// application/ProductService.js
+const ProductRepository = require("../infrastructure/repository/ProductRepository");
 const Logger = require("../../shared/infrastructure/Logger");
 const ProductCreatedEvent = require("../../shared/domain/ProductCreatedEvent");
-
+const Product = require ('../domain/models/product.js')
 class ProductService {
+  constructor() {
+    this.productRepository = new ProductRepository();
+  }
+
   async createProduct(name, price) {
-    Logger.info(
-      `Creating product: ${name} with price ${price.amount} ${price.currency}`
-    );
+    Logger.info(`Creating product: ${name} with price ${price.amount} ${price.currency}`);
 
     const product = new Product(null, name, price);
-    const productDoc = new ProductModel({
-      name: product.name,
-      price: {
-        amount: product.getPrice().getAmount(),
-        currency: product.getPrice().getCurrency(),
-      },
-    });
-    await productDoc.save();
+    const createdProduct = await this.productRepository.createProduct(product);
 
-    Logger.info(`Product created with ID: ${productDoc._id}`);
-    const productCreatedEvent = new ProductCreatedEvent(productDoc._id);
+    Logger.info(`Product created with ID: ${createdProduct.id}`);
+    const productCreatedEvent = new ProductCreatedEvent(createdProduct.id);
     Logger.event(`ProductCreateEvent Trigger: ${JSON.stringify(productCreatedEvent, null, 2)}`);
   
-    return new Product(productDoc._id, productDoc.name, productDoc.price);
+    return createdProduct;
   }
 
   async updateProductPrice(productId, newPrice) {
-    Logger.info(
-      `Updating price for product ID: ${productId} to ${newPrice.amount} ${newPrice.currency}`
-    );
+    Logger.info(`Updating price for product ID: ${productId} to ${newPrice.amount} ${newPrice.currency}`);
 
-    const productDoc = await ProductModel.findById(productId);
-    if (!productDoc) {
+    const product = await this.productRepository.findById(productId);
+    if (!product) {
       throw new Error("Product not found");
     }
-
-    const product = new Product(
-      productDoc._id,
-      productDoc.name,
-      productDoc.price
-    );
     product.changePrice(newPrice);
-
-    productDoc.price = {
-      amount: product.getPrice().getAmount(),
-      currency: product.getPrice().getCurrency(),
-    };
-    await productDoc.save();
-
-    Logger.info(`Price updated for product ID: ${productId}`);
-    return product;
+    return await this.productRepository.updateProductPrice(product);
   }
 
   async getProductById(id) {
-    const productDoc = await ProductModel.findById(id);
-    if (!productDoc) {
-      return null;
-    }
-    return new Product(productDoc._id, productDoc.name, productDoc.price);
+    return await this.productRepository.findById(id);
   }
 
   async deleteProduct(id) {
-    const result = await ProductModel.deleteOne({ _id: id });
-    if (result.deletedCount === 0) {
+    const deleted = await this.productRepository.deleteProduct(id);
+    if (!deleted) {
       throw new Error("Product not found");
     }
   }
 
   async listAllProducts() {
-    const productDocs = await ProductModel.find();
-    return productDocs.map((doc) => new Product(doc._id, doc.name, doc.price));
+    return await this.productRepository.listAllProducts();
   }
 }
 

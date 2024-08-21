@@ -1,4 +1,4 @@
-const Logger = require("../../shared/infrastructure/Logger");
+const Logger = require("../../../shared/infrastructure/Logger");
 
 class Cart {
   constructor(id, userId, products = []) {

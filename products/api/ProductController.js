@@ -1,3 +1,4 @@
+// api/ProductController.js
 const express = require("express");
 const ProductService = require("../application/ProductService");
 const Logger = require("../../shared/infrastructure/Logger");
@@ -5,10 +6,10 @@ const router = express.Router();
 const productService = new ProductService();
 
 router.post("/", async (req, res) => {
-  const { name, price, quantity } = req.body;
+  const { name, price } = req.body;
   try {
     Logger.info(`Request received to create product: ${name}`);
-    const product = await productService.createProduct(name, price, quantity);
+    const product = await productService.createProduct(name, price);
     res.status(201).json(product);
   } catch (error) {
     Logger.error(`Error creating product: ${error.message}`);
@@ -36,10 +37,7 @@ router.put("/:id/price", async (req, res) => {
   const { newPrice } = req.body;
   try {
     Logger.info(`Request received to update price for product ID: ${id}`);
-    const updatedProduct = await productService.updateProductPrice(
-      id,
-      newPrice
-    );
+    const updatedProduct = await productService.updateProductPrice(id, newPrice);
     res.status(200).json(updatedProduct);
   } catch (error) {
     Logger.error(`Error updating price: ${error.message}`);

@@ -1,22 +1,17 @@
 const mongoose = require("mongoose");
-const CartModel = require("../infrastructure/CartModel");
-const ProductModel = require("../../products/infrastructure/ProductModel");
+const CartRepository = require("../infrastructure/repository/CartRepository");
+const ProductModel = require("../../products/infrastructure/Models/ProductModel.js");
 const Logger = require("../../shared/infrastructure/Logger");
-const Cart = require("../domain/Cart");
+const Cart = require("../domain/models/Cart");
 
 class CartService {
+  constructor() {
+    this.cartRepository = new CartRepository();
+  }
+
   async createCart(userId) {
     Logger.info(`Creating new cart for user ID: ${userId}`);
-
-    let cartDoc = await CartModel.findOne({ user: userId });
-    if (cartDoc) {
-      throw new Error("Cart already exists for this user");
-    }
-
-    cartDoc = new CartModel({ user: userId, products: [] });
-    await cartDoc.save();
-    Logger.info(`Cart created with ID: ${cartDoc._id}`);
-    return cartDoc;
+    return this.cartRepository.createCart(userId);
   }
 
   async addProductToCart(userId, productId, quantity = 1) {
@@ -24,7 +19,7 @@ class CartService {
       `Adding product ${productId} with quantity ${quantity} to cart for user ID: ${userId}`
     );
 
-    let cartDoc = await CartModel.findOne({ user: userId }).populate("user");
+    let cartDoc = await this.cartRepository.findCartByUserId(userId);
     if (!cartDoc) {
       cartDoc = await this.createCart(userId);
     }
@@ -50,7 +45,7 @@ class CartService {
       cartDoc.products.push(product);
     }
 
-    await cartDoc.save();
+    await this.cartRepository.saveCart(cartDoc);
     Logger.info(
       `Product ${productId} added to cart ID: ${cartDoc._id} with quantity ${quantity}`
     );
@@ -65,7 +60,7 @@ class CartService {
     const cleanedProductId = productId.replace(/^:/, "");
     const productObjectId = mongoose.Types.ObjectId(cleanedProductId);
 
-    const cartDoc = await CartModel.findOne({ user: userId }).populate("user");
+    const cartDoc = await this.cartRepository.findCartByUserId(userId);
     if (!cartDoc) {
       throw new Error("Cart not found");
     }
@@ -73,7 +68,7 @@ class CartService {
     cartDoc.products = cartDoc.products.filter(
       (item) => !item.productId.equals(productObjectId)
     );
-    await cartDoc.save();
+    await this.cartRepository.saveCart(cartDoc);
 
     Logger.info(`Product ${productId} removed from cart ID: ${cartDoc._id}`);
     return cartDoc;
@@ -81,11 +76,7 @@ class CartService {
 
   async getCartByUserId(userId) {
     Logger.info(`Retrieving cart for user ID: ${userId}`);
-
-    const cartDoc = await CartModel.findOne({ user: userId })
-      .populate("user")
-      .populate("products.productId");
-
+    const cartDoc = await this.cartRepository.findCartByUserId(userId);
     if (!cartDoc) {
       Logger.warn(`No cart found for user ID: ${userId}`);
       return null;

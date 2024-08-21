@@ -1,5 +1,5 @@
-const Money = require("../../shared/domain/Money");
-const Logger = require("../../shared/infrastructure/Logger");
+const Money = require("../../../shared/domain/Money");
+const Logger = require("../../../shared/infrastructure/Logger");
 
 class Product {
   constructor(id, name, price) {

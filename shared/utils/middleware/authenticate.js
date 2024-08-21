@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const UserModel = require("../../../customer/infrastructure/UserModel.js");
+const UserModel = require("../../../customer/infrastructure/Models/UserModel.js");
 const Logger = require("../../../shared/infrastructure/Logger.js");
 const dotenv = require("dotenv");
 
