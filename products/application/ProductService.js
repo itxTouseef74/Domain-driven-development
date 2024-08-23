@@ -8,6 +8,7 @@ class ProductService {
     this.productRepository = new ProductRepository();
   }
 
+  
   async createProduct(name, price) {
     Logger.info(`Creating product: ${name} with price ${price.amount} ${price.currency}`);
 
