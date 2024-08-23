@@ -4,7 +4,7 @@
   "description": "this is ddd",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "dev": "node app.js"
   },
   "author": "touseef hussain",
   "license": "ISC",

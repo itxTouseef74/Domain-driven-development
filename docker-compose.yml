@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    container_name: ecommerce_app
+    ports:
+      - "3000:3000" 
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/ecommerce
+    depends_on:
+      - mongo
+    networks:
+      - ecommerce-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - ecommerce-network
+
+volumes:
+  mongo-data:
+    driver: local
+
+networks:
+  ecommerce-network:
+    driver: bridge

@@ -1,38 +1,55 @@
-# E-commerce App
-
-This is a simple e-commerce application built using Node.js and Express, following Domain-Driven Design (DDD) principles. The application is divided into three main bounded contexts: Products, Shopping (Cart), and Customer.
-
-## Project Structure
-
-```plaintext
 ecommerce-app/
 ├── shopping/
 │   ├── domain/
+│   │   ├── models/
+│   │   │   └── Cart.js
+│   │   └── ProductAddedToCartEvent.js
 │   ├── application/
+│   │   └── CartService.js
 │   ├── infrastructure/
+│   │   ├── repository/
+│   │   │   └── CartRepository.js
+│   │   └── models/
+│   │       └── CartModel.js
 │   ├── api/
-│       └── ShoppingController.js
+│       └── CartController.js
 ├── products/
 │   ├── domain/
+│   │   ├── models/
+│   │   │   └── Product.js
+│   │   └── ProductCreatedEvent.js
 │   ├── application/
+│   │   └── ProductService.js
 │   ├── infrastructure/
+│   │   ├── repository/
+│   │   │   └── ProductRepository.js
+│   │   └── models/
+│   │       └── ProductModel.js
 │   ├── api/
 │       └── ProductController.js
 ├── customer/
 │   ├── domain/
+│   │   ├── models/
+│   │   │   └── Customer.js
+│   │   └── CustomerCreatedEvent.js
 │   ├── application/
+│   │   └── CustomerService.js
 │   ├── infrastructure/
+│   │   ├── repository/
+│   │   │   └── CustomerRepository.js
+│   │   └── models/
+│   │       └── CustomerModel.js
 │   ├── api/
 │       └── CustomerController.js
 ├── shared/
 │   ├── domain/
-│   │   ├── ValueObject.js
-│   │   ├── Money.js
 │   │   ├── DomainEvent.js
-│   │   └── ProductCreatedEvent.js
+│   │   ├── Money.js
+│   │   └── ValueObject.js
 │   ├── infrastructure/
-│       ├── Logger.js
-│       └── Database.js
+│       ├── Database.js
+│       └── Logger.js
 ├── app.js
+├── Dockerfile
+├── docker-compose.yml
 └── package.json
-
